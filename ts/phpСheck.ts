@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { ExtensionSettings } from "./ExtensionSettings";
-
+import * as path from 'path';
 
 async function debug(message: string) {
 	if (ExtensionSettings.DEBUG) {
@@ -201,8 +201,12 @@ export class PhpСheck {
 			this.diagnosticCollection = vscode.languages.createDiagnosticCollection('fxpw-php-blade');
 			this.context.subscriptions.push(
 				vscode.workspace.onDidChangeTextDocument(async (event) => {
+					
 					let document = event.document;
-					if (document.uri.path.includes('.blade.php')) {
+					if (document.uri.path.includes(`${path.sep}lang${path.sep}`) || document.uri.path.endsWith('lang')) {
+						return;
+					}
+					if (document.uri.path.includes('.blade.php') ) {
 						let allDiagnostics: vscode.Diagnostic[] = [];
 						this.diagnosticCollection.set(document.uri, undefined);
 
@@ -231,7 +235,10 @@ export class PhpСheck {
 				vscode.workspace.onDidChangeTextDocument(async (event) => {
 					let document = event.document;
 
-					if (document.uri.path.includes('.php') && !document.uri.path.includes('.blade.php')) {
+					if ((document.uri.path.includes('.php')||document.uri.path.includes('.vue')) && !document.uri.path.includes('.blade.php')) {
+						if (document.uri.path.includes(`${path.sep}lang${path.sep}`) || document.uri.path.endsWith('lang')) {
+							return;
+						}
 						let allDiagnostics: vscode.Diagnostic[] = [];
 						this.diagnosticCollection.set(document.uri, undefined);
 
