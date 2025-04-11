@@ -18,7 +18,6 @@ gm: # update and get from git repo
 	eval $$(ssh-agent -s) && ssh-add ~/gitKey && git merge
 update: gf gm rebuild
 	echo "rebuild"
-
 vscode-build:
 	vsce package
 	vsce publish
