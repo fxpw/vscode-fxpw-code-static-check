@@ -3,7 +3,8 @@ import {PhpСheck} from "./phpСheck";
 export async function activate(context: vscode.ExtensionContext) {
 	try {
 		await PhpСheck.Init(context);
-		console.log("init vscode-fxpw-php-static-check v1.0.14");
+		const version = context.extension.packageJSON.version;
+		console.log(`vscode-fxpw-php-static-check version: ${version}`);
 	} catch (error) {
 		console.error(error);
 	}
