@@ -3,7 +3,7 @@
 	"displayName": "vscode-fxpw-php-static-check",
 	"description": "vscode-fxpw-php-static-check",
 	"publisher": "fxpw",
-	"version": "1.0.22222",
+	"version": "1.0.@VERSION_FROM_RUNNER@",
 	"engines": {
 		"vscode": "^1.91.0"
 	},

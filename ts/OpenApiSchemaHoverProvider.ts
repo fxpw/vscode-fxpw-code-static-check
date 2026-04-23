@@ -7,6 +7,11 @@ type OpenApiSchemaProperty = {
 	description?: string;
 	nullable?: boolean;
 	example?: string;
+	ref?: string;
+	items?: string;
+	oneOf?: string[];
+	anyOf?: string[];
+	allOf?: string[];
 };
 
 type OpenApiSchemaInfo = {
@@ -16,6 +21,8 @@ type OpenApiSchemaInfo = {
 	description?: string;
 	properties: OpenApiSchemaProperty[];
 	uri: vscode.Uri;
+	/** Character offset in the document where #[OA\Schema( starts */
+	offset: number;
 };
 
 type ExtractedBlock = {
@@ -23,7 +30,7 @@ type ExtractedBlock = {
 	endIndex: number;
 };
 
-export class OpenApiSchemaHoverProvider implements vscode.HoverProvider, vscode.Disposable {
+export class OpenApiSchemaHoverProvider implements vscode.HoverProvider, vscode.DefinitionProvider, vscode.Disposable {
 	private schemaIndexPromise: Promise<Map<string, OpenApiSchemaInfo[]>> | null = null;
 	private readonly disposables: vscode.Disposable[] = [];
 
@@ -43,7 +50,8 @@ export class OpenApiSchemaHoverProvider implements vscode.HoverProvider, vscode.
 
 		context.subscriptions.push(
 			provider,
-			vscode.languages.registerHoverProvider(selector, provider)
+			vscode.languages.registerHoverProvider(selector, provider),
+			vscode.languages.registerDefinitionProvider(selector, provider)
 		);
 	}
 
@@ -80,6 +88,30 @@ export class OpenApiSchemaHoverProvider implements vscode.HoverProvider, vscode.
 		}
 
 		return new vscode.Hover(this.buildHoverMarkdown(reference.schemaName, schemas), reference.range);
+	}
+
+	async provideDefinition(document: vscode.TextDocument, position: vscode.Position): Promise<vscode.Location[] | null> {
+		if (!ExtensionSettings.OPENAPI_SCHEMA_HOVER) {
+			return null;
+		}
+
+		const reference = this.getSchemaReferenceAtPosition(document, position);
+		if (!reference) {
+			return null;
+		}
+
+		const schemaIndex = await this.getSchemaIndex();
+		const schemas = schemaIndex.get(reference.schemaName);
+		if (!schemas || schemas.length === 0) {
+			return null;
+		}
+
+		const locations = await Promise.all(schemas.map(async schema => {
+			const doc = await vscode.workspace.openTextDocument(schema.uri);
+			const pos = doc.positionAt(schema.offset);
+			return new vscode.Location(schema.uri, pos);
+		}));
+		return locations;
 	}
 
 	private invalidateIndex(): void {
@@ -167,7 +199,8 @@ export class OpenApiSchemaHoverProvider implements vscode.HoverProvider, vscode.
 					title: this.readNamedString(block.body, 'title'),
 					description: this.readNamedString(block.body, 'description'),
 					properties: this.extractProperties(block.body),
-					uri: document.uri
+					uri: document.uri,
+					offset: startIndex
 				});
 			}
 
@@ -205,7 +238,12 @@ export class OpenApiSchemaHoverProvider implements vscode.HoverProvider, vscode.
 					type: this.readNamedString(block.body, 'type'),
 					description: this.readNamedString(block.body, 'description'),
 					nullable: this.readNamedBoolean(block.body, 'nullable'),
-					example: this.readNamedValue(block.body, 'example')
+					example: this.readNamedValue(block.body, 'example'),
+					ref: this.readSchemaRef(block.body, 'ref'),
+					items: this.readItemsRef(block.body),
+					oneOf: this.readCompositeRefs(block.body, 'oneOf'),
+					anyOf: this.readCompositeRefs(block.body, 'anyOf'),
+					allOf: this.readCompositeRefs(block.body, 'allOf')
 				});
 			}
 
@@ -326,6 +364,52 @@ export class OpenApiSchemaHoverProvider implements vscode.HoverProvider, vscode.
 		return match?.[1]?.trim() || undefined;
 	}
 
+	/**
+	 * Reads ref: "#/components/schemas/Name" => returns "Name"
+	 */
+	private readSchemaRef(body: string, key: string): string | undefined {
+		const raw = this.readNamedString(body, key);
+		if (!raw) {
+			return undefined;
+		}
+		const match = raw.match(/#\/components\/schemas\/([A-Za-z0-9_.-]+)/);
+		return match?.[1] ?? raw;
+	}
+
+	/**
+	 * Reads items: new OA\Items(ref: "#/components/schemas/Name") => returns "Name"
+	 */
+	private readItemsRef(body: string): string | undefined {
+		const itemsMatch = body.match(/\bitems\s*:\s*new\s+OA\\Items\s*\(([^)]+)\)/);
+		if (!itemsMatch) {
+			return undefined;
+		}
+		const refMatch = itemsMatch[1].match(/ref\s*:\s*["']([^"']+)["']/);
+		if (!refMatch) {
+			return undefined;
+		}
+		const schemaMatch = refMatch[1].match(/#\/components\/schemas\/([A-Za-z0-9_.-]+)/);
+		return schemaMatch?.[1] ?? refMatch[1];
+	}
+
+	/**
+	 * Reads oneOf/anyOf/allOf: [new OA\Schema(ref: "..."), ...] => returns array of schema names
+	 */
+	private readCompositeRefs(body: string, key: string): string[] | undefined {
+		const arrayBody = this.extractNamedArray(body, key);
+		if (!arrayBody) {
+			return undefined;
+		}
+		const refRegex = /ref\s*:\s*["']([^"']+)["']/g;
+		const results: string[] = [];
+		let match: RegExpExecArray | null;
+		while ((match = refRegex.exec(arrayBody)) !== null) {
+			const schemaMatch = match[1].match(/#\/components\/schemas\/([A-Za-z0-9_.-]+)/);
+			results.push(schemaMatch?.[1] ?? match[1]);
+		}
+		return results.length > 0 ? results : undefined;
+	}
+
 	private buildHoverMarkdown(schemaName: string, schemas: OpenApiSchemaInfo[]): vscode.MarkdownString {
 		const markdown = new vscode.MarkdownString();
 		markdown.isTrusted = false;
@@ -356,6 +440,21 @@ export class OpenApiSchemaHoverProvider implements vscode.HoverProvider, vscode.
 					const details: string[] = [];
 					if (property.type) {
 						details.push(`type: ${property.type}`);
+					}
+					if (property.ref) {
+						details.push(`$ref: ${property.ref}`);
+					}
+					if (property.items) {
+						details.push(`items: ${property.items}`);
+					}
+					if (property.oneOf) {
+						details.push(`oneOf: ${property.oneOf.join(' | ')}`);
+					}
+					if (property.anyOf) {
+						details.push(`anyOf: ${property.anyOf.join(' | ')}`);
+					}
+					if (property.allOf) {
+						details.push(`allOf: ${property.allOf.join(' & ')}`);
 					}
 					if (property.nullable) {
 						details.push('nullable');
