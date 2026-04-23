@@ -1,8 +1,10 @@
 import * as vscode from 'vscode';
+import { OpenApiSchemaHoverProvider } from './OpenApiSchemaHoverProvider';
 import {PhpСheck} from "./phpСheck";
 export async function activate(context: vscode.ExtensionContext) {
 	try {
 		await PhpСheck.Init(context);
+		OpenApiSchemaHoverProvider.register(context);
 		const version = context.extension.packageJSON.version;
 		console.log(`vscode-fxpw-php-static-check version: ${version}`);
 	} catch (error) {

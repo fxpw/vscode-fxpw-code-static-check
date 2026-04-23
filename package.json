@@ -3,7 +3,7 @@
 	"displayName": "vscode-fxpw-php-static-check",
 	"description": "vscode-fxpw-php-static-check",
 	"publisher": "fxpw",
-	"version": "1.0.@VERSION_FROM_RUNNER@",
+	"version": "1.0.22222",
 	"engines": {
 		"vscode": "^1.91.0"
 	},
@@ -33,6 +33,11 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Check php code"
+				},
+				"vscode-fxpw-php-static-check.openApiSchemaHover": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show hover for OpenAPI schema references"
 				},
 				"vscode-fxpw-php-static-check.DEBUG": {
 					"type": "boolean",

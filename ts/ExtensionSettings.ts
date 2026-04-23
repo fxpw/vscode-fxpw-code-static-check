@@ -14,6 +14,9 @@ export class ExtensionSettings {
 	static get CHECK_PHP_CODE(): boolean {
 		return this.config.get<boolean>('phpCode') ?? false;
 	}
+	static get OPENAPI_SCHEMA_HOVER(): boolean {
+		return this.config.get<boolean>('openApiSchemaHover') ?? true;
+	}
 	static get DEBUG(): boolean {
 		return this.config.get<boolean>('DEBUG') ?? false;
 	}
