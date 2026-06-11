@@ -1,6 +1,6 @@
 {
 	"name": "vscode-fxpw-code-static-check",
-	"displayName": "vscode fxpw code static check",
+	"displayName": "vscode-fxpw-code-static-check",
 	"description": "Static code checks and complexity metrics for PHP, JavaScript, TypeScript, Lua and C++",
 	"publisher": "fxpw",
 	"version": "1.0.@VERSION_FROM_RUNNER@",
