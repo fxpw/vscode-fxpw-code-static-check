@@ -1,7 +1,7 @@
 {
-	"name": "vscode-fxpw-php-static-check",
-	"displayName": "vscode-fxpw-php-static-check",
-	"description": "vscode-fxpw-php-static-check",
+	"name": "vscode-fxpw-code-static-check",
+	"displayName": "vscode fxpw code static check",
+	"description": "Static code checks and complexity metrics for PHP, JavaScript, TypeScript, Lua and C++",
 	"publisher": "fxpw",
 	"version": "1.0.@VERSION_FROM_RUNNER@",
 	"engines": {
@@ -17,29 +17,46 @@
 	"icon": "images/icon.jpg",
 	"contributes": {
 		"configuration": {
-			"title": "vscode-fxpw-php-static-check-properties",
+			"title": "vscode-fxpw-code-static-check-properties",
 			"properties": {
-				"vscode-fxpw-php-static-check.localization": {
+				"vscode-fxpw-code-static-check.localization": {
 					"type": "boolean",
 					"default": true,
 					"description": "Check localization"
 				},
-				"vscode-fxpw-php-static-check.bladeTemplates": {
+				"vscode-fxpw-code-static-check.bladeTemplates": {
 					"type": "boolean",
 					"default": true,
 					"description": "Check bladeTemplates"
 				},
-				"vscode-fxpw-php-static-check.phpCode": {
+				"vscode-fxpw-code-static-check.phpCode": {
 					"type": "boolean",
 					"default": true,
 					"description": "Check php code"
 				},
-				"vscode-fxpw-php-static-check.openApiSchemaHover": {
+				"vscode-fxpw-code-static-check.complexityMetrics": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enable per-function complexity metrics"
+				},
+				"vscode-fxpw-code-static-check.cognitiveComplexityWarningThreshold": {
+					"type": "number",
+					"default": 15,
+					"minimum": 1,
+					"description": "Warning threshold for cognitive complexity"
+				},
+				"vscode-fxpw-code-static-check.cyclomaticComplexityWarningThreshold": {
+					"type": "number",
+					"default": 10,
+					"minimum": 1,
+					"description": "Warning threshold for cyclomatic complexity"
+				},
+				"vscode-fxpw-code-static-check.openApiSchemaHover": {
 					"type": "boolean",
 					"default": true,
 					"description": "Show hover for OpenAPI schema references"
 				},
-				"vscode-fxpw-php-static-check.DEBUG": {
+				"vscode-fxpw-code-static-check.debug": {
 					"type": "boolean",
 					"default": false,
 					"description": "Enable debug"
@@ -49,14 +66,14 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/fxpw/vscode-fxpw-php-static-check.git"
+		"url": "https://github.com/fxpw/vscode-fxpw-code-static-check.git"
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts",
+		"lint": "eslint ts --ext ts",
 		"test": "vscode-test"
 	},
 	"license": "SEE LICENSE IN LICENSE",

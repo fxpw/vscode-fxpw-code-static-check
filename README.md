@@ -1,8 +1,8 @@
 
-# vscode-fxpw-php-static-check
+# vscode fxpw code static check
 
-Расширение VS Code для статического анализа PHP, Blade и Vue файлов.  
-Подсвечивает проблемы со стилем кода, незалокализованные строки и ссылки на OpenAPI-схемы прямо в редакторе.
+Расширение VS Code для статических проверок кода и метрик сложности.  
+Подсвечивает проблемы со стилем кода, незалокализованные строки, ссылки на OpenAPI-схемы и показывает метрики сложности по функциям прямо в редакторе.
 
 ## Возможности
 
@@ -12,8 +12,17 @@
 - **Двойные пробелы** — предупреждение на два и более пробела подряд
 - **Пробел в конце строки** — предупреждение на пробел перед переносом строки
 - **Кириллица в строковых литералах** — предупреждение, если строка содержит кириллический текст без обёртки в хелпер локализации
+- **Метрики по каждой функции** — подсветка `Cognitive Complexity` и `Cyclomatic Complexity`; при превышении порогов показывается `warning`
 
 Проверки работают для файлов `.php` и `.vue`. Файлы внутри директорий `lang/` автоматически исключаются.
+
+### Метрики сложности по функциям
+
+- Поддерживаемые языки: `PHP`, `JavaScript`, `TypeScript`, `Lua`, `C++`
+- Для каждой найденной функции рассчитываются:
+  - `Cognitive Complexity`
+  - `Cyclomatic Complexity`
+- Пороговые значения предупреждений настраиваются через settings
 
 ### Проверки Blade-шаблонов
 
@@ -32,11 +41,14 @@
 
 | Настройка | По умолчанию | Описание |
 |---|---|---|
-| `vscode-fxpw-php-static-check.phpCode` | `true` | Включить проверки PHP / Vue |
-| `vscode-fxpw-php-static-check.bladeTemplates` | `true` | Включить проверки Blade-шаблонов |
-| `vscode-fxpw-php-static-check.localization` | `true` | Предупреждать о незалокализованной кириллице |
-| `vscode-fxpw-php-static-check.openApiSchemaHover` | `true` | Показывать hover и переход к определению для ссылок на OpenAPI-схемы |
-| `vscode-fxpw-php-static-check.DEBUG` | `false` | Выводить отладочные сообщения в консоль разработчика |
+| `vscode-fxpw-code-static-check.phpCode` | `true` | Включить проверки PHP / Vue |
+| `vscode-fxpw-code-static-check.bladeTemplates` | `true` | Включить проверки Blade-шаблонов |
+| `vscode-fxpw-code-static-check.localization` | `true` | Предупреждать о незалокализованной кириллице |
+| `vscode-fxpw-code-static-check.complexityMetrics` | `true` | Включить метрики сложности по функциям |
+| `vscode-fxpw-code-static-check.cognitiveComplexityWarningThreshold` | `15` | Порог warning для Cognitive Complexity |
+| `vscode-fxpw-code-static-check.cyclomaticComplexityWarningThreshold` | `10` | Порог warning для Cyclomatic Complexity |
+| `vscode-fxpw-code-static-check.openApiSchemaHover` | `true` | Показывать hover и переход к определению для ссылок на OpenAPI-схемы |
+| `vscode-fxpw-code-static-check.debug` | `false` | Выводить отладочные сообщения в консоль разработчика |
 
 ## Версионирование
 

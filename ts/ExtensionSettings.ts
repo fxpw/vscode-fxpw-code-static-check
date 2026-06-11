@@ -1,8 +1,10 @@
 import * as vscode from 'vscode';
 
 export class ExtensionSettings {
+	static readonly CONFIG_SECTION = 'vscode-fxpw-code-static-check';
+
 	static get config(): vscode.WorkspaceConfiguration {
-		return vscode.workspace.getConfiguration('vscode-fxpw-php-static-check');
+		return vscode.workspace.getConfiguration(this.CONFIG_SECTION);
 	}
 
 	static get CHECK_LOCALIZATION(): boolean {
@@ -17,11 +19,20 @@ export class ExtensionSettings {
 	static get OPENAPI_SCHEMA_HOVER(): boolean {
 		return this.config.get<boolean>('openApiSchemaHover') ?? true;
 	}
+	static get CHECK_COMPLEXITY_METRICS(): boolean {
+		return this.config.get<boolean>('complexityMetrics') ?? true;
+	}
+	static get COGNITIVE_COMPLEXITY_WARNING_THRESHOLD(): number {
+		return this.config.get<number>('cognitiveComplexityWarningThreshold') ?? 15;
+	}
+	static get CYCLOMATIC_COMPLEXITY_WARNING_THRESHOLD(): number {
+		return this.config.get<number>('cyclomaticComplexityWarningThreshold') ?? 10;
+	}
 	static get DEBUG(): boolean {
-		return this.config.get<boolean>('DEBUG') ?? false;
+		return this.config.get<boolean>('debug') ?? false;
 	}
 
-	static UpdateSettingsHandler(): void {
+	static updateSettingsHandler(): void {
 		try {
 			// console.log("UpdateSettingsHandler");
 		} catch (error) {
@@ -30,11 +41,11 @@ export class ExtensionSettings {
 	}
 
 	// Инициализация класса с подпиской на изменения конфигурации
-	static async Init(context: vscode.ExtensionContext): Promise<void> {
-		vscode.workspace.onDidChangeConfiguration(event => {
-			if (event.affectsConfiguration('vscode-fxpw-php-static-check')) {
-				this.UpdateSettingsHandler();
+	static async init(context: vscode.ExtensionContext): Promise<void> {
+		context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
+			if (event.affectsConfiguration(this.CONFIG_SECTION)) {
+				this.updateSettingsHandler();
 			}
-		});
+		}));
 	}
 }

@@ -4,6 +4,23 @@
 
 Версия формируется автоматически при публикации: `1.0.{номер_запуска_CI}` (`github.run_number`).
 
+## [Unreleased]
+
+### Изменено
+
+- Проект переименован в `vscode fxpw code static check`
+- Ключи настроек переведены на новый префикс `vscode-fxpw-code-static-check.*`
+- Базовая логика диагностики вынесена в новый общий класс `CodeStaticCheck`
+
+### Добавлено
+
+- Метрики сложности по функциям для `PHP`, `JavaScript`, `TypeScript`, `Lua`, `C++`
+- Новые настройки:
+  - `vscode-fxpw-code-static-check.complexityMetrics`
+  - `vscode-fxpw-code-static-check.cognitiveComplexityWarningThreshold`
+  - `vscode-fxpw-code-static-check.cyclomaticComplexityWarningThreshold`
+- Обновление diagnostics при изменении настроек расширения
+
 ## [1.0.18+] 
 
 ### Добавлено
