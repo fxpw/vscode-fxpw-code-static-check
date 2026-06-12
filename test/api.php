@@ -5,8 +5,8 @@ namespace Orchestrator\Api\V1\Controllers;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
-    name: "user_notify_log_types",
-    description: "API для управления настройками уведомлений пользователей"
+	name: "user_notify_log_types",
+	description: "API для управления настройками уведомлений пользователей"
 )]
 /**
  * @property \Orchestrator\Api\V1\Services\UserNotifyLogTypeService $userNotifyLogTypeService Сервис для работы с настройками уведомлений
@@ -19,92 +19,92 @@ class UserNotifyLogTypeController
 	 * Получить список настроек уведомлений
 	 */
 	#[OA\Get(
-	    path: "/api/v1/user_notify_log_types",
-	    summary: "Получить список настроек уведомлений",
-	    description: "Возвращает список настроек уведомлений пользователей",
-	    security: [["bearerAuth" => []], ["sessionAuth" => []]],
-	    tags: ["user_notify_log_types"],
-	    parameters: [
-	        new OA\Parameter(
-	            name: "page",
-	            in: "query",
-	            description: "Номер страницы",
-	            required: false,
-	            schema: new OA\Schema(type: "integer", minimum: 1, default: 1)
-	        ),
-	        new OA\Parameter(
-	            name: "per_page",
-	            in: "query",
-	            description: "Количество элементов на странице",
-	            required: false,
-	            schema: new OA\Schema(type: "integer", minimum: 1, maximum: 100, default: 20)
-	        ),
-	        new OA\Parameter(
-	            name: "user_guid",
-	            in: "query",
-	            description: "Фильтр по пользователю (GUID)",
-	            required: false,
-	            schema: new OA\Schema(type: "string", format: "uuid", pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", example: "550e8400-e29b-41d4-a716-446655440000")
-	        ),
-	        new OA\Parameter(
-	            name: "level",
-	            in: "query",
-	            description: "Фильтр по уровню",
-	            required: false,
-	            schema: new OA\Schema(type: "string")
-	        ),
-	        new OA\Parameter(
-	            name: "type",
-	            in: "query",
-	            description: "Фильтр по типу",
-	            required: false,
-	            schema: new OA\Schema(type: "string")
-	        )
-	    ],
-	    responses: [
-	        new OA\Response(
-	            response: 200,
-	            description: "Успешный ответ",
-	            content: new OA\JsonContent(
-	                type: "object",
-	                properties: [
-	                    new OA\Property(property: "success", type: "boolean", example: true),
-	                    new OA\Property(
-	                        property: "data",
-	                        type: "array",
-	                        items: new OA\Items(ref: "#/components/schemas/UserNotifyLogType")
-	                    ),
-	                    new OA\Property(
-	                        property: "meta",
-	                        type: "object",
-	                        properties: [
-	                            new OA\Property(property: "page", type: "integer", example: 1),
-	                            new OA\Property(property: "per_page", type: "integer", example: 20),
-	                            new OA\Property(property: "total", type: "integer", example: 100)
-	                        ]
-	                    )
-	                ]
-	            )
-	        ),
-	        new OA\Response(
-	            response: 500,
-	            description: "Внутренняя ошибка сервера",
-	            content: new OA\JsonContent(
-	                type: "object",
-	                properties: [
-	                    new OA\Property(property: "success", type: "boolean", example: false),
-	                    new OA\Property(property: "data", type: "object", nullable: true),
-	                    new OA\Property(
-	                        property: "error",
-	                        type: "object",
-	                        properties: [
-	                            new OA\Property(property: "message", type: "string", example: "Internal server error")
-	                        ]
-	                    )
-	                ]
-	            )
-	        )
-	    ]
+		path: "/api/v1/user_notify_log_types",
+		summary: "Получить список настроек уведомлений",
+		description: "Возвращает список настроек уведомлений пользователей",
+		security: [["bearerAuth" => []], ["sessionAuth" => []]],
+		tags: ["user_notify_log_types"],
+		parameters: [
+			new OA\Parameter(
+				name: "page",
+				in: "query",
+				description: "Номер страницы",
+				required: false,
+				schema: new OA\Schema(type: "integer", minimum: 1, default: 1)
+			),
+			new OA\Parameter(
+				name: "per_page",
+				in: "query",
+				description: "Количество элементов на странице",
+				required: false,
+				schema: new OA\Schema(type: "integer", minimum: 1, maximum: 100, default: 20)
+			),
+			new OA\Parameter(
+				name: "user_guid",
+				in: "query",
+				description: "Фильтр по пользователю (GUID)",
+				required: false,
+				schema: new OA\Schema(type: "string", format: "uuid", pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", example: "550e8400-e29b-41d4-a716-446655440000")
+			),
+			new OA\Parameter(
+				name: "level",
+				in: "query",
+				description: "Фильтр по уровню",
+				required: false,
+				schema: new OA\Schema(type: "string")
+			),
+			new OA\Parameter(
+				name: "type",
+				in: "query",
+				description: "Фильтр по типу",
+				required: false,
+				schema: new OA\Schema(type: "string")
+			)
+		],
+		responses: [
+			new OA\Response(
+				response: 200,
+				description: "Успешный ответ",
+				content: new OA\JsonContent(
+					type: "object",
+					properties: [
+						new OA\Property(property: "success", type: "boolean", example: true),
+						new OA\Property(
+							property: "data",
+							type: "array",
+							items: new OA\Items(ref: "#/components/schemas/UserNotifyLogType")
+						),
+						new OA\Property(
+							property: "meta",
+							type: "object",
+							properties: [
+								new OA\Property(property: "page", type: "integer", example: 1),
+								new OA\Property(property: "per_page", type: "integer", example: 20),
+								new OA\Property(property: "total", type: "integer", example: 100)
+							]
+						)
+					]
+				)
+			),
+			new OA\Response(
+				response: 500,
+				description: "Внутренняя ошибка сервера",
+				content: new OA\JsonContent(
+					type: "object",
+					properties: [
+						new OA\Property(property: "success", type: "boolean", example: false),
+						new OA\Property(property: "data", type: "object", nullable: true),
+						new OA\Property(
+							property: "error",
+							type: "object",
+							properties: [
+								new OA\Property(property: "message", type: "string", example: "Internal server error")
+							]
+						)
+					]
+				)
+			)
+		]
 	)]
 	public function getUserNotifyLogTypes(Request $request, Response $response): Response
 	{
