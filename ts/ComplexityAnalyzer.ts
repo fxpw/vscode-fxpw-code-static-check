@@ -15,6 +15,10 @@ interface OffsetPosition {
 }
 
 abstract class BaseComplexityAnalyzer {
+	protected preserveLayout(fragment: string): string {
+		return fragment.replace(/[^\r\n]/g, ' ');
+	}
+
 	protected createLineMap(text: string): number[] {
 		const lineStarts = [0];
 		for (let index = 0; index < text.length; index++) {
@@ -143,12 +147,12 @@ abstract class BraceLanguageComplexityAnalyzer extends BaseComplexityAnalyzer {
 
 	protected stripCommentsAndStrings(text: string): string {
 		return text
-			.replace(/\/\*[\s\S]*?\*\//g, ' ')
-			.replace(/\/\/.*$/gm, ' ')
-			.replace(/#.*$/gm, ' ')
-			.replace(/'(?:\\.|[^'\\])*'/g, "''")
-			.replace(/"(?:\\.|[^"\\])*"/g, '""')
-			.replace(/`(?:\\.|[^`\\])*`/g, '``');
+			.replace(/\/\*[\s\S]*?\*\//g, match => this.preserveLayout(match))
+			.replace(/\/\/.*$/gm, match => this.preserveLayout(match))
+			.replace(/#.*$/gm, match => this.preserveLayout(match))
+			.replace(/'(?:\\.|[^'\\])*'/g, match => this.preserveLayout(match))
+			.replace(/"(?:\\.|[^"\\])*"/g, match => this.preserveLayout(match))
+			.replace(/`(?:\\.|[^`\\])*`/g, match => this.preserveLayout(match));
 	}
 
 	protected findMatchingBrace(text: string, openBraceOffset: number): number {
@@ -298,10 +302,10 @@ class LuaComplexityAnalyzer extends BaseComplexityAnalyzer {
 
 	private stripCommentsAndStrings(text: string): string {
 		return text
-			.replace(/--\[\[[\s\S]*?\]\]/g, ' ')
-			.replace(/--.*$/gm, ' ')
-			.replace(/'(?:\\.|[^'\\])*'/g, "''")
-			.replace(/"(?:\\.|[^"\\])*"/g, '""');
+			.replace(/--\[\[[\s\S]*?\]\]/g, match => this.preserveLayout(match))
+			.replace(/--.*$/gm, match => this.preserveLayout(match))
+			.replace(/'(?:\\.|[^'\\])*'/g, match => this.preserveLayout(match))
+			.replace(/"(?:\\.|[^"\\])*"/g, match => this.preserveLayout(match));
 	}
 
 	analyzeText(text: string): FunctionMetric[] {

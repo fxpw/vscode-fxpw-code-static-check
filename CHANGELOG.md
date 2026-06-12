@@ -21,6 +21,10 @@
   - `vscode-fxpw-code-static-check.cyclomaticComplexityWarningThreshold`
 - Обновление diagnostics при изменении настроек расширения
 
+### Исправлено
+
+- Исправлена привязка строки diagnostics для `Cognitive Complexity` и `Cyclomatic Complexity` в `PHP`: очистка комментариев и строк больше не сдвигает позиции функций
+
 ## [1.0.18+] 
 
 ### Добавлено
